@@ -207,6 +207,77 @@ Sara likes apple too [[1 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 1]]
  [[2 1 1 1 1 2 1 1 2 1 1 2 2 1 1 1 1]
 ```
 
+## 3. TF-IDF
+Term Frequency - Inverse Document Frequency
+
+- TF-IDF gives more importance to words that are rare and important in a document, unlike Bag-of-Words (BoW) that just counts how many times each word appears. _Sometimes we call it “Term” instead of "Word"_.
+- This helps TF-IDF capture the unique aspects of each document better.
+
+- TF-IDF focuses on words that are actually meaningful in a document, ignoring common words like "the" or "and" that don't tell us much _(their large counts
+means LOW discrimination power between documents)_. By doing this, TF-IDF reduces the noise in the document representation
+
+### **What is Term Frequency (TF)?**
+- This summarizes how often a given word appears within a document.
+- Calculated as the ratio of the number of times a term appears in a document to the total number of terms in the document.
+- Often normalized to prevent bias towards longer documents.
+
+### **What is Inverse Document Frequency (IDF)?** 
+- This down-scales words that appear a lot across documents.
+- Calculated as the logarithm of the ratio of the total number of documents to the number of documents containing the term.
+- Terms that appear in many documents will have a lower IDF, while terms that appear in fewer documents will have a higher IDF.
+
+### **What does HIGH TF-IDF value for a word mean?**
+**TF*IDF**
+- **TF:** Word appears a lot <ins>in this document</ins>.
+- **IDF:** Word rarely appears across <ins>all documents</ins>.
+*TF-IDF defines the importance of a keyword or phrase within a document
+[Same Word has different TF-IDF values in different documents]*
+
+### 1. Calculate Term Frequency (TF)
+There are 3 ways:
+a.  Normalized Term Frequency
+b. Logarithmically scaled Term Frequency
+c. Augmented Term Frequency
+
+#### a. Normalized Term Frequency
+
+### $TF_{(t, d)} = \frac{f_{t,d}}{\sum_{t' \in d} f_{t',d}}$
+TF = (Number of times term t appeared in document d)/(Total number of terms in document d, counting repeated terms)
+
+Where:
+
+$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+
+NOTE: 
+- Dividing by denominator normalizes the value of TF irrespective of document length
+
+#### b. Logarithmically scaled Term Frequency
+
+### $TF_{(t, d)} = \log(1 + f_{t,d})$
+TF = log(1 + Number of times term t appeared in document d)
+
+Where:
+
+$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+
+NOTE:
+- Logarithmic scale of $f_{t,d}$ value compensates different documents length
+- Adding "1" to prevent log calculation error if $f_{t,d}$ is zero (word does not occur in document
+
+#### b. Augmented Term Frequency
+
+### $TF_{(t, d)} = 0.5 + 0.5 * \frac{f_{t,d}}{\max\{f_{t',d}: t' \in d\}}$
+
+TF = 0.5 + 0.5 * (Number of times term t appeared in document d / Number of times the most frequently occurring term in the document appeared)
+
+Where:
+
+$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+
+NOTE:
+- This prevents bias towards longer documents
+-  Ranges from 0.5 to 1
+
 
 # Resources Used
 - Lecture Slides
