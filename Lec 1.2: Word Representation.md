@@ -233,7 +233,7 @@ means LOW discrimination power between documents)_. By doing this, TF-IDF reduce
 *TF-IDF defines the importance of a keyword or phrase within a document
 [Same Word has different TF-IDF values in different documents]*
 
-### 1. Calculate Term Frequency (TF)
+### STEP 1: Calculate Term Frequency (TF)
 There are 3 ways:
 a.  Normalized Term Frequency
 b. Logarithmically scaled Term Frequency
@@ -245,8 +245,7 @@ c. Augmented Term Frequency
 TF = (Number of times term t appeared in document d)/(Total number of terms in document d, counting repeated terms)
 
 Where:
-
-$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+- $f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
 
 NOTE: 
 - Dividing by denominator normalizes the value of TF irrespective of document length
@@ -257,8 +256,7 @@ NOTE:
 TF = log(1 + Number of times term t appeared in document d)
 
 Where:
-
-$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+- $f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
 
 NOTE:
 - Logarithmic scale of $f_{t,d}$ value compensates different documents length
@@ -271,12 +269,50 @@ NOTE:
 TF = 0.5 + 0.5 * (Number of times term t appeared in document d / Number of times the most frequently occurring term in the document appeared)
 
 Where:
-
-$f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
+- $f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
 
 NOTE:
 - This prevents bias towards longer documents
 -  Ranges from 0.5 to 1
+
+### STEP 2: Inverse Document Frequency (IDF)
+### $IDF_{(t, D)} = \log\left(\frac{N}{n_t}\right)$
+
+Where:
+- $N$: total number of documents in the corpus "D".
+- $n_{t}$ : number of documents where the term "t" appears.
+
+**ISSUE!!!: If the term is not in the corpus, this will lead to a division-by-zero.**
+
+#### **SOLUTION: Inverse Document Frequency SMOOTHING**
+### $IDF_{(t, D)} = \log\left(\frac{N}{1 + n_t}\right) + 1$
+
+- Adding 1 to denominator to prevent division by 0 if term is not in the corpus.
+- Adding "1" to IDF value to make sure it is always positive (Cases where $n_t$ = $N$).
+
+NOTE:
+- If terms are extracted from Documents, there will be at least one document associated with each term, No Divide by zero, No need for smoothing
+
+### STEP 3: TF-IDF
+### $TF\text{-}IDF(t, d, D) = TF(t, d) \times IDF(t, D)$
+
+**A high weight in tf–idf is reached by:**
+- A high term frequency (in the given document).
+  - Term appears a lot in a GIVEN document .
+- A low document frequency of the term in the whole collection of documents (high Inverse Document Frequency).
+  - Term does not appear a lot over ALL documentS.
+
+NOTES:
+- The weights hence tend to filter out common terms. 
+- Since the ratio inside the idf's log function is always greater than or equal to 1, the **value of idf (and tf–idf) is greater than or equal to 0**. 
+- As a term appears in more documents, the ratio inside the logarithm approaches 1, bringing the idf and tf–idf closer to 0.
+
+
+### TF-IDF CALCULATION IN SKLEARN
+![image](https://github.com/SohailaDiab/Processing-of-Formal-and-Natural-Languages-Course/assets/70928356/fc9af829-a828-4c85-b15d-3b767516a724)
+
+
+
 
 
 # Resources Used
