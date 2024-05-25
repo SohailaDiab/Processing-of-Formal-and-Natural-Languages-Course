@@ -252,8 +252,8 @@ NOTE:
 
 #### b. Logarithmically scaled Term Frequency
 
-### $TF_{(t, d)} = \log(1 + f_{t,d})$
-TF = log(1 + Number of times term t appeared in document d)
+### $TF_{(t, d)} = \log_e(1 + f_{t,d})$
+TF = log_e(1 + Number of times term t appeared in document d)
 
 Where:
 - $f_{t,d}$ is the raw count of a term in a document, i.e., the number of times that term $t$ occurs in document $d$.
@@ -276,7 +276,7 @@ NOTE:
 -  Ranges from 0.5 to 1
 
 ### STEP 2: Inverse Document Frequency (IDF)
-### $IDF_{(t, D)} = \log\left(\frac{N}{n_t}\right)$
+### $IDF_{(t, D)} = \log_e\left(\frac{N}{n_t}\right)$
 
 Where:
 - $N$: total number of documents in the corpus "D".
@@ -285,7 +285,7 @@ Where:
 **ISSUE!!!: If the term is not in the corpus, this will lead to a division-by-zero.**
 
 #### **SOLUTION: Inverse Document Frequency SMOOTHING**
-### $IDF_{(t, D)} = \log\left(\frac{N}{1 + n_t}\right) + 1$
+### $IDF_{(t, D)} = \log_e\left(\frac{N}{1 + n_t}\right) + 1$
 
 - Adding 1 to denominator to prevent division by 0 if term is not in the corpus.
 - Adding "1" to IDF value to make sure it is always positive (Cases where $n_t$ = $N$).
@@ -311,9 +311,43 @@ NOTES:
 ### TF-IDF CALCULATION IN SKLEARN
 ![image](https://github.com/SohailaDiab/Processing-of-Formal-and-Natural-Languages-Course/assets/70928356/fc9af829-a828-4c85-b15d-3b767516a724)
 
+### Code
+```py
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+# list of text documents
+text = ["Hany love going to school",
+ "The school is far from Sara home",
+ "Hany likes apple more than banana",
+ "Sara likes apple too"]
+np.set_printoptions(precision=3)
+vectorizer = TfidfVectorizer() # create the transform instance
+vectorizer.fit(text) # tokenize and build vocab
+print(vectorizer.vocabulary_)
+print(vectorizer.idf_)
+```
+```
+Output:
+{'hany': 5, 'love': 9, 'going': 4, 'to': 15, 'school': 12, 'the': 14, 'is': 7, 'far': 2, 'from': 3, 'sara': 11, 'home': 6, 'likes': 8, 'apple': 0, 'more': 10, 'than': 13, 
+'banana': 1, 'too': 16}
+'hany' 'love' 'going' 'to' 'school' 'the' ' is' 'far' 'from' 'sara' 'home' 'likes' 'apple' 'more' 'than' 'banana' 'too'
+[1.511 1.916 1.916 1.916 1.916 1.511 1.916 1.916 1.511 1.916 1.916 1.511 1.511 1.916 1.916 1.916 1.916]
+```
 
+```py
+for i in range(len(text)): # encode document
+ vector = vectorizer.transform([text[i]]) 
+ print("text Number [{}] {}".format(i,vector.toarray()))
+```
+```
+Output:
 
-
+'apple' 'banana' 'far' 'from' 'going' 'hany' 'home' ' is' 'likes' 'love' 'more' 'sara' 'school' 'than' 'the' 'to' 'too'
+[ 0. 0. 0. 0. 0.485 0.383 0. 0. 0. 0.485 0. 0. 0.383 0. 0. 0.485 0. ]
+[ 0. 0. 0.4 0.4 0. 0. 0.4 0.4 0. 0. 0. 0.316 0.316 0. 0.4 0. 0. ]
+[0.357 0.453 0. 0. 0. 0.357 0. 0. 0.357 0. 0.453 0. 0. 0.453 0. 0. 0. ]
+[0.466 0. 0. 0. 0. 0. 0. 0. 0.466 0. 0. 0.466 0. 0. 0. 0. 0.591]
+```
 
 # Resources Used
 - Lecture Slides
