@@ -25,6 +25,12 @@ text.
 
 - The length of the vector is the length of the unique words in the vocabulary.
 
+**Note:**
+- **Distance** between two vectors of two words that are **One-Hot Encoded** is the 
+**same** (either “2” for different words and “0” for same words)
+- **Distance** between two vectors of two words that are **Integer Encoded** (vector 
+length=1) **differs** based on integer values given to both words.
+
 ### Example
 Assume we have a small vocabulary consisting of the words $\{\text{cat}, \text{dog}, \text{fish}\}$.
 
@@ -112,8 +118,96 @@ One Hot
 [1. 0. 0. 0.]]
 ```
 
+- Distance between “plane” and “truck”
+  - Integer encoded: (3-1)^2 = 4
+  - one Hot Encoded: 1+1=2
+- Distance between “plane” and “car”
+  - Integer encoded: (1-0)^2 = 1
+  - one Hot Encoded: 1+1=2
+
+## 2. Bag of Words (BOW)
+- The bag of words (BOW) model is a representation that turns arbitrary text into fixed-length vectors by counting how many times each word appears.
+-  It is called a “bag” of words, because any information about the order or structure of words in the document is discarded.
+
+BOW involves:
+- A vocabulary of known words. (AKA Vocab)
+- A measure of the presence of known words (count of how many times a word appears). (Histogram)
+
+### Steps to represent Documents using BOW
+1. Take the corpus (full set of documents) and tokenize the documents (sentences) into words... basically break it into single words: [["hello","world"],["i","love","pizza"]]
+2. Filter out stop words (eg. the, in, and, of, an, ...). These are words that appear very frequently in the language but do not give us a lot of information, so we can remove these words without losing any information.
+3. Take the remaining tokens (words) and stem/lemmatize them. This basically gets the root word for each word.
+4. Design the vocabulary (Dictionary of UNIQUE words in the corpus).
+5. For each word, count how many times it appears in each document(sentence).
+
+NOTE: For documents not considered during Vocab design (were not in the training process), they may contain some words not in vocabulary (Out of Vocab). Those words are ignored.
+
+### Example
+**Corpus:**
+1. "The cat sits on the mat"
+2. "The dogs bark at the cat"
+3. "The cat chases the mouse and the cat sits on the mat"
+
+**Vocabulary:** (after removing stop words and stemming)
+["cat", "sit", "mat", "dog", "bark", "chase", "mouse"]
+
+**Bag of Words Embeddings:**
+
+| Sentence                                     | cat | sit | mat | dog | bark | chase | mouse |
+|----------------------------------------------|-----|-----|-----|-----|------|-------|-------|
+| The cat sits on the mat                      | 1   | 1   | 1   | 0   | 0    | 0     | 0     |
+| The dogs bark at the cat                     | 1   | 0   | 0   | 1   | 1    | 0     | 0     |
+| The cat chases the mouse and the cat sits on the mat | 2   | 1   | 1   | 0   | 0    | 1     | 1     |
+
+### Code
+```py
+from sklearn.feature_extraction.text import CountVectorizer
+# text documents
+text_1="Hany love going to school"
+text_2="The school is far from Sara home"
+text_3="Hany likes apple more than banana"
+text_4="Sara likes apple too"
+corpus=[text_1+" "+text_2+" "+text_3+" "+text_4]
+# create Vectorizer
+vectorizer = CountVectorizer()
+# tokenize, build vocab
+vectorizer.fit(corpus)
+print("Vocab \n ========")
+print(vectorizer.vocabulary_)
+
+# encode document
+vector = vectorizer.transform([text_1])
+print(text_1," ",vector.toarray())
+vector = vectorizer.transform([text_2])
+print(text_2," ",vector.toarray())
+vector = vectorizer.transform([text_3])
+print(text_3," ",vector.toarray())
+vector = vectorizer.transform([text_4])
+print(text_4," ",vector.toarray())
+vector = vectorizer.transform(corpus)
+print(corpus," ",vector.toarray())
+```
+```
+Output:
+
+Vocab 
+========
+{'hany': 5, 'love': 9, 'going': 4, 'to': 15, 'school': 12, 'the': 14, 'is': 7, 'far': 2, 'from': 3, 'sara': 11, 'home': 6, 'likes': 8, 'apple': 
+0, 'more': 10, 'than': 13, 'banana': 1, 'too': 16}
+
+Hany love going to school [[0 0 0 0 1 1 0 0 0 1 0 0 1 0 0 1 0]]
+
+The school is far from Sara home [[0 0 1 1 0 0 1 1 0 0 0 1 1 0 1 0 0]]
+
+Hany likes apple more than banana [[1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 0 0]]
+
+Sara likes apple too [[1 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 1]]
+
+'Hany love going to school The school is far from Sara home Hany likes apple more than banana Sara likes apple too'] 
+ [[2 1 1 1 1 2 1 1 2 1 1 2 2 1 1 1 1]
+```
 
 
-
-
-
+# Resources Used
+- Lecture Slides
+- [Bag of Words | Video by Quantopian](https://www.youtube.com/watch?v=IRKDrrzh4dE)
